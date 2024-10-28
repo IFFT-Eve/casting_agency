@@ -1,25 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+} from "react-router-dom";
+import { appRoute, RouterList } from "./router/router";
+import { useEffect } from "react";
+import { Auth0Provider } from "@auth0/auth0-react";
+import authConfig from "./auth-config.json";
 
 function App() {
+  useEffect(() => {
+    document.body.style.margin = "0";
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Auth0Provider
+      domain={authConfig.domain}
+      clientId={authConfig.clientId}
+      authorizationParams={{
+        redirect_uri: authConfig.redirectUri,
+        audience: authConfig.audience
+      }}
+      onRedirectCallback={(appState) => console.log(appState)}
+    >
+      <RouterProvider
+        router={createBrowserRouter(
+          createRoutesFromElements(appRoute(RouterList))
+        )}
+      ></RouterProvider>
+    </Auth0Provider>
   );
 }
 
